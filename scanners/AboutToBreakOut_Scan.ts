@@ -1,46 +1,80 @@
-# ============================================
-# ABOUT TO BREAK OUT SCAN
-# Author: ran-eliahu + Claude | April 2026
-# Repository: https://github.com/ran-eliahu/ThinkOrSwim-
-# ============================================
-# DESCRIPTION:
-#   Scans for stocks coiling near a breakout point — price is
-#   consolidating in a tight range near recent highs with
-#   rising momentum. TTM Squeeze is used as the primary
-#   compression/momentum proxy.
+# ============================================================
+# ABOUT TO BREAK OUT SCANNER (PRO EDITION)
+# Author: Ran Eliahu (@ran-eliahu)
+# Platform: TD Ameritrade / Schwab ThinkorSwim (TOS)
+# Language: ThinkScript
+# Timeframe: Daily or 60-min (Stock Hacker Native)
 #
-# LOGIC:
-#   - TTM Squeeze momentum is positive and rising (breakout fuel)
-#   - Price is within 3% of the 20-day high (near resistance)
-#   - Price is above the 50 SMA (trend is supportive)
-#   - Relative volume picking up (accumulation signal)
+# Core Strategy & Edge:
+#   Takes momentum coiling to the next level by combining:
+#   1. Resistance Shelf Proximity: Price consolidated within 3% 
+#      of the 20-day / 50-day resistance pivot.
+#   2. Multi-Factor Volatility Contraction: ATR(5) compression and 
+#      TTM Squeeze coiling along the rising 10/20 EMA shelf.
+#   3. Volume Dry-Up (Supply Exhaustion): Sellers have vanished, 
+#      setting up an asymmetric risk/reward breakout.
+#   4. Early Momentum Acceleration: Squeeze histogram and MACD 
+#      curling upwards prior to explosive price ignition.
 #
-# HOW TO USE IN TOS:
-#   Scan Tab → Add Study Filter → Edit Formula → paste code
-#
-# NOTE:
-#   TOS scans do not support secondary aggregation periods.
-#   All conditions use the primary chart aggregation.
-#
-# BEST PAIRED WITH:
-#   BullishReversalEntry.ts or ORB indicator for entry trigger
-# ============================================
+# Modes:
+#   - Coil_Setup (Default): Catches the stock at maximum compression 
+#     the day BEFORE the breakout.
+#   - Breakout_Trigger: Alerts on the exact bar price breaches resistance.
+# ============================================================
 
-def sma50    = Average(close, 50);
-def high20   = Highest(high, 20);
-def squeeze  = TTM_Squeeze().Histogram;
-def relVol   = volume / Average(volume, 50);
+# ---- USER INPUTS ----
+input scanMode = {default "Coil_Setup", "Breakout_Trigger"};
+input pivotLookback = 20;         # Resistance pivot lookback (10, 20, 50 bars)
+input maxPctFromPivot = 3.5;      # Max % distance below pivot for coil
+input atrRatio = 0.80;            # ATR(5) <= ATR(20) * 0.80
+input minPrice = 10.0;
+input minAvgVolume = 500000;
 
-# Squeeze momentum positive and rising
-def sqzMomRising = squeeze > 0 and squeeze > squeeze[1];
+# ---- 1. STRUCTURAL TREND & RESISTANCE SHELF ----
+def ema10 = ExpAverage(close, 10);
+def ema20 = ExpAverage(close, 20);
+def sma50 = Average(close, 50);
+def sma200 = Average(close, 200);
 
-# Price within 3% of 20-day high
-def nearHigh = close >= high20 * 0.97;
+# Confirmed uptrend alignment
+def trendConstructive = close > sma50 and (sma50 >= sma200 or close > sma200);
 
-# Above 50 SMA
-def aboveSMA50 = close > sma50;
+# Dynamic resistance pivot
+def pivotHigh = Highest(high[1], pivotLookback);
+def distFromPivot = (pivotHigh - close) / pivotHigh * 100;
+def nearPivotShelf = distFromPivot >= 0 and distFromPivot <= maxPctFromPivot;
 
-# Volume picking up
-def volPickup = relVol > 1.1;
+# Support hugging along 10/20 EMA
+def holdsEmaSupport = close >= ema20 * 0.985 and close >= ema10 * 0.98;
 
-plot scan = sqzMomRising and nearHigh and aboveSMA50 and volPickup;
+# ---- 2. VOLATILITY CONTRACTION (COIL) ----
+def atr5 = MovingAverage(AverageType.SIMPLE, TrueRange(high, close, low), 5);
+def atr20 = MovingAverage(AverageType.SIMPLE, TrueRange(high, close, low), 20);
+def atrCoiling = atr5 <= (atr20 * atrRatio);
+
+# TTM Squeeze momentum
+def sqzHist = TTM_Squeeze().Histogram;
+def momTurningUp = sqzHist > sqzHist[1] or sqzHist > 0;
+
+# RSI momentum floor
+def rsiVal = RSI(14);
+def rsiHealthy = rsiVal >= 52 and rsiVal <= 72;
+
+# ---- 3. VOLUME DRY-UP & LIQUIDITY ----
+def avgVol50 = Average(volume, 50);
+def volDryUp = volume <= (avgVol50 * 0.90) or Average(volume, 3) <= avgVol50;
+def liquidityOK = avgVol50 >= minAvgVolume and close >= minPrice;
+
+# ---- 4. BREAKOUT TRIGGER METRICS ----
+def breakingPivotToday = close crosses above pivotHigh or (close > pivotHigh and close[1] <= pivotHigh);
+def breakoutVolumeSurge = volume >= (avgVol50 * 1.25);
+
+# ---- SCAN TRIGGER ----
+def isCoil = trendConstructive and nearPivotShelf and holdsEmaSupport and atrCoiling and momTurningUp and rsiHealthy and volDryUp and liquidityOK;
+def isBreakout = trendConstructive and breakingPivotToday and breakoutVolumeSurge and liquidityOK;
+
+plot AboutToBreakOut = if scanMode == scanMode."Coil_Setup" then isCoil else isBreakout;
+
+# ---- FORMATTING ----
+AboutToBreakOut.AssignValueColor(if scanMode == scanMode."Coil_Setup" then Color.CYAN else Color.GREEN);
+AboutToBreakOut.SetPaintingStrategy(PaintingStrategy.BOOLEAN_ARROW_UP);

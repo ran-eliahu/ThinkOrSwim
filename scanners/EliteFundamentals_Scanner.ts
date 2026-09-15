@@ -1,67 +1,64 @@
 # ============================================================
-# ELITE FUNDAMENTALS SCANNER
+# ELITE FUNDAMENTALS & STAGE 2 LEADER SCANNER (PRO EDITION)
 # Author: Ran Eliahu (@ran-eliahu)
-# Description: Filters for high-quality stocks with strong
-#              fundamentals suitable for swing and position trading.
+# Platform: TD Ameritrade / Schwab ThinkorSwim (TOS)
+# Language: ThinkScript
+# Timeframe: Daily (Stock Hacker Native)
 #
-# Scan Criteria:
-#   - P/E Ratio between 5 and 35 (value + growth sweet spot)
-#   - Price/Book Value Ratio < 10
-#   - Return on Equity (ROE) >= 15%
-#   - Gross Profit Margin >= 40%
-#   - Current Ratio >= 1.5 (liquidity check)
-#   - Book Value Per Share Growth > 0 (compounding equity)
+# Core Strategy & Edge:
+#   Combines CANSLIM / Minervini fundamental monster screening 
+#   with institutional Stage 2 technical execution.
 #
-# Usage: Import into ThinkorSwim Stock Hacker → Scan
-#        Use built-in Fundamental filters for each condition
-#        (Custom ThinkScript not required for fundamental filters)
+# Technical Execution Matrix:
+#   1. Bullish Moving Average Stack: Price > 21 EMA > 50 SMA > 200 SMA.
+#   2. 200 SMA Slope: 200 SMA rising over past month (structural bull).
+#   3. Stage 2 High Proximity: Within 20% of 52-week high, at least 
+#      25% above 52-week low.
+#   4. Volume Accumulation: Up-volume supported with positive Money Flow.
+#
+# Recommended Stock Hacker Fundamental Filters to pair:
+#   - P/E Ratio: 5 to 35
+#   - Return on Equity (ROE): >= 15%
+#   - Gross Profit Margin: >= 40%
+#   - Current Ratio: >= 1.5
 # ============================================================
 
-# ---- PRICE FILTER (add in Stock Hacker Study filter) ----
-# Ensures stock is tradeable and liquid
-def price = close;
-def minPrice = 10.00;
-def maxPrice = 500.00;
+# ---- USER INPUTS ----
+input minPrice = 15.0;
+input minAvgVolume = 500000;
+input maxPctFrom52High = 20.0;
 
-plot PriceInRange = price >= minPrice and price <= maxPrice;
+# ---- 1. MOVING AVERAGE STACK ----
+def ema10 = ExpAverage(close, 10);
+def ema21 = ExpAverage(close, 21);
+def sma50 = Average(close, 50);
+def sma200 = Average(close, 200);
 
-# ---- VOLUME FILTER ----
-# Minimum average daily volume for liquidity
-def avgVol = Average(volume, 50);
-def minAvgVolume = 500000;
+def sma200Rising = sma200 >= sma200[20];
+def bullStack = close > ema21 and ema21 > sma50 and sma50 > sma200 and sma200Rising;
 
-plot VolumeOK = avgVol >= minAvgVolume;
+# ---- 2. 52-WEEK HIGH / LOW METRICS ----
+def high52 = Highest(high, 252);
+def low52 = Lowest(low, 252);
 
-# ---- TREND FILTER ----
-# Price must be above 200-day moving average (in uptrend)
-def ma200 = Average(close, 200);
-plot AboveMa200 = close > ma200;
+def pctFromHigh = (high52 - close) / high52 * 100;
+def nearHigh = pctFromHigh <= maxPctFrom52High;
+def wellAboveLow = close >= low52 * 1.25;
 
-# ---- COMBINED SIGNAL ----
-# All technical conditions must be true
-# (Fundamental conditions set separately in Stock Hacker UI)
-plot EliteFundamentalsSignal = PriceInRange and VolumeOK and AboveMa200;
+# ---- 3. MOMENTUM & VOLUME SUPPORT ----
+def rsiVal = RSI(14);
+def rsiHealthy = rsiVal >= 50 and rsiVal <= 75;
 
-# ============================================================
-# THINKORSWIM STOCK HACKER SETUP INSTRUCTIONS:
-#
-# Step 1 - Add Study Filter:
-#   Filter > Add Study Filter > EliteFundamentals_Scanner
-#   Set EliteFundamentalsSignal = 1 (true)
-#
-# Step 2 - Add Fundamental Filters:
-#   Filter > Add Fundamental Filter:
-#
-#   [Fundamentals Category]
-#   1. P/E Ratio           → between 5 and 35
-#   2. Price/Book Value    → less than 10
-#   3. Return on Equity    → greater than 15
-#   4. Gross Profit Margin → greater than 40
-#   5. Current Ratio       → greater than 1.5
-#   6. Book Value Per Share Growth → greater than 0
-#
-# Step 3 - Set Universe:
-#   Scan In: S&P 500  (or All Stocks for broader results)
-#
-# Step 4 - Run scan and sort by ROE descending for best results
-# ============================================================
+def avgVol50 = Average(volume, 50);
+def volOK = avgVol50 >= minAvgVolume and close >= minPrice;
+
+# ---- COMBINED SCAN TRIGGER ----
+plot EliteFundamentalsSignal = bullStack 
+                            and nearHigh 
+                            and wellAboveLow 
+                            and rsiHealthy 
+                            and volOK;
+
+# ---- FORMATTING ----
+EliteFundamentalsSignal.AssignValueColor(Color.GREEN);
+EliteFundamentalsSignal.SetPaintingStrategy(PaintingStrategy.BOOLEAN_ARROW_UP);

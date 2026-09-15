@@ -1,42 +1,44 @@
-# ============================================
-# FALLEN ANGELS SCAN
-# Author: ran-eliahu + Claude | April 2026
-# Repository: https://github.com/ran-eliahu/ThinkOrSwim-
-# ============================================
-# DESCRIPTION:
-#   Scans for stocks that were previously strong (52-week high
-#   territory) but have pulled back significantly — "fallen angels."
-#   These are high-quality stocks that have sold off and may be
-#   setting up for a recovery/mean reversion trade.
-#
-# LOGIC:
-#   - Stock is down significantly from its 52-week high (30%+)
-#   - But still above its 52-week low (not in freefall)
-#   - Price is showing early signs of stabilization (close > open)
-#   - Relative volume is elevated (institutional interest returning)
-#
-# HOW TO USE IN TOS:
-#   Scan Tab → Add Study Filter → Edit Formula → paste code
-#
-# BEST PAIRED WITH:
-#   BullishReversalEntry.ts for entry timing on recovered setups
-# ============================================
+# ============================================================
+# FALLEN ANGELS MEAN REVERSION SCANNER (PRO EDITION)
+# Author: Ran Eliahu (@ran-eliahu)
+# Platform: TD Ameritrade / Schwab ThinkorSwim (TOS)
+# Language: ThinkScript
+# Timeframe: Daily (Stock Hacker Native)
+# ============================================================
 
-def hi52  = Highest(high, 252);
-def lo52  = Lowest(low, 252);
-def range52 = hi52 - lo52;
+input rsiLength = 14;
+input rsiMin = 25.0;
+input rsiMax = 44.0;
+input minPullbackPct = 8.0;
+input maxPullbackPct = 28.0;
+input minPrice = 15.0;
+input minAvgVolume = 1000000;
 
-# Down 30%+ from 52-week high
-def fallenFromHigh = (hi52 - close) / hi52 >= 0.30;
+# Pullback from 52-week High
+def high52 = Highest(high, 252);
+def pullbackPct = (high52 - close) / high52 * 100;
+def inValidPullbackZone = pullbackPct >= minPullbackPct and pullbackPct <= maxPullbackPct;
 
-# But not at the absolute bottom (some floor exists)
-def aboveLow = close > lo52 * 1.05;
+# Long-term health (Above or testing rising 200 SMA)
+def sma200 = Average(close, 200);
+def sma200Rising = sma200 >= sma200[20] - (0.005 * close);
+def aboveSma200 = close >= (sma200 * 0.985) and sma200Rising;
 
-# Current candle showing strength
-def greenCandle = close > open;
+# Momentum Rebound
+def rsiVal = RSI(length = rsiLength);
+def rsiOversoldRecovering = rsiVal >= rsiMin and rsiVal <= rsiMax and rsiVal > rsiVal[2];
+def macdHist = MACD().Diff;
+def macdTurningUp = macdHist > macdHist[1];
 
-# Elevated relative volume (proxy)
-def relVol = volume / Average(volume, 50);
-def highRelVol = relVol > 1.2;
+# Support defense
+def candleRange = high - low;
+def lowerWick = Min(open, close) - low;
+def buyerSupport = (lowerWick >= candleRange * 0.30) or (close >= open and close >= close[1]);
+def lowest5Low = Lowest(low[2], 5);
+def holdingSupportFloor = low >= lowest5Low * 0.985;
 
-plot scan = fallenFromHigh and aboveLow and greenCandle and highRelVol;
+# Liquidity
+def avgVol50 = Average(volume, 50);
+def liquidityOK = avgVol50 >= minAvgVolume and close >= minPrice;
+
+plot scan = inValidPullbackZone and aboveSma200 and rsiOversoldRecovering and macdTurningUp and buyerSupport and holdingSupportFloor and liquidityOK;

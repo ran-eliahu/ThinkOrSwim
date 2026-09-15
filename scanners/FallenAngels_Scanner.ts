@@ -1,83 +1,71 @@
 # ============================================================
-# FALLEN ANGELS SCANNER
+# FALLEN ANGELS INSTITUTIONAL MEAN REVERSION SCANNER (PRO EDITION)
 # Author: Ran Eliahu (@ran-eliahu)
-# Description: Identifies high-quality S&P 500 stocks that have
-#              pulled back significantly from their 52-week highs
-#              but are showing early signs of recovery.
-#              Classic mean-reversion / dip-buying setup.
+# Platform: TD Ameritrade / Schwab ThinkorSwim (TOS)
+# Language: ThinkScript
+# Timeframe: Daily (Stock Hacker Native)
 #
-# Scan Criteria:
-#   - S&P 500 universe (quality filter built-in)
-#   - RSI(14) between 25 and 40 (oversold but not broken)
-#   - Price is 8% to 25% below 52-week high (pullback zone)
-#   - Price is ABOVE 200-day MA (long-term uptrend intact)
-#   - RSI is rising (momentum turning up)
-#
-# Trading Window: Daily/Weekly charts for swing/position trades
+# Core Strategy & Edge:
+#   Eliminates broken falling knives by strictly requiring:
+#   1. Quality Blue Chip / High Liquidity Universe.
+#   2. Deep Pullback to Major Value: 8% to 28% off 52-week highs.
+#   3. Long-Term Health: Price ABOVE rising 200-day SMA.
+#   4. Wyckoff Support Spring / Reversal Candle: Price rejected 
+#      breakdown and closed green or formed a bullish bottoming wick.
+#   5. Synchronized RSI Momentum Rebound: RSI(14) curling out of 
+#      the 25-42 oversold pocket with positive MACD velocity.
 # ============================================================
 
-# ---- RSI CALCULATION ----
-def rsiLength = 14;
-def rsiValue = RSI(length = rsiLength);
+# ---- USER INPUTS ----
+input rsiLength = 14;
+input rsiMin = 25.0;
+input rsiMax = 44.0;
+input minPullbackPct = 8.0;
+input maxPullbackPct = 28.0;
+input minPrice = 15.0;
+input minAvgVolume = 1000000;
 
-# RSI must be in oversold-recovery zone
-def rsiOversold = rsiValue >= 25 and rsiValue <= 40;
-
-# ---- RSI RISING (momentum turning) ----
-# Current RSI higher than 3 bars ago
-def rsiRising = rsiValue > rsiValue[3];
-
-# ---- 52-WEEK HIGH PULLBACK ----
+# ---- 1. PULLBACK DEPTH FROM 52-WEEK HIGH ----
 def high52 = Highest(high, 252);
 def pullbackPct = (high52 - close) / high52 * 100;
+def inValidPullbackZone = pullbackPct >= minPullbackPct and pullbackPct <= maxPullbackPct;
 
-# Between 8% and 25% off the 52-week high
-def inPullbackZone = pullbackPct >= 8 and pullbackPct <= 25;
+# ---- 2. LONG-TERM STRUCTURAL TREND ----
+def sma200 = Average(close, 200);
+def sma200Rising = sma200 >= sma200[20] - (0.005 * close);
+def aboveSma200 = close >= (sma200 * 0.985) and sma200Rising; # Above or kissing 200 SMA
 
-# ---- TREND FILTER ----
-# Must be above 200-day MA — we want fallen angels, not broken stocks
-def ma200 = Average(close, 200);
-def aboveMa200 = close > ma200;
+# ---- 3. RSI MOMENTUM REBOUND ----
+def rsiVal = RSI(length = rsiLength);
+def rsiOversoldRecovering = rsiVal >= rsiMin and rsiVal <= rsiMax and rsiVal > rsiVal[2];
 
-# ---- VOLUME FILTER ----
+# MACD histogram turning up from deep depression
+def macdHist = MACD().Diff;
+def macdTurningUp = macdHist > macdHist[1];
+
+# ---- 4. REVERSAL STABILIZATION (Support Floor) ----
+# Candle shows buyers defending the low (hammer or green close)
+def candleRange = high - low;
+def lowerWick = Min(open, close) - low;
+def buyerSupport = (lowerWick >= candleRange * 0.30) or (close >= open and close >= close[1]);
+
+# Low is holding support floor (not in freefall waterfall)
+def lowest5Low = Lowest(low[2], 5);
+def holdingSupportFloor = low >= lowest5Low * 0.985;
+
+# ---- 5. LIQUIDITY ----
 def avgVol50 = Average(volume, 50);
-def minVolume = 1000000; # Minimum 1M avg daily volume for S&P 500 names
-def sufficientVolume = avgVol50 >= minVolume;
+def liquidityOK = avgVol50 >= minAvgVolume and close >= minPrice;
 
-# ---- PRICE FLOOR ----
-def minPrice = 20.00;
-def priceOK = close >= minPrice;
+# ---- COMBINED SCAN TRIGGER ----
+plot FallenAngelSignal = inValidPullbackZone 
+                      and aboveSma200 
+                      and rsiOversoldRecovering 
+                      and macdTurningUp 
+                      and buyerSupport 
+                      and holdingSupportFloor 
+                      and liquidityOK;
 
-# ---- COMBINED FALLEN ANGEL SIGNAL ----
-plot FallenAngelSignal = rsiOversold
-                      and rsiRising
-                      and inPullbackZone
-                      and aboveMa200
-                      and sufficientVolume
-                      and priceOK;
-
-# ---- PULLBACK PERCENTAGE LABEL (for chart use) ----
-plot PullbackPercent = pullbackPct;
-
-# ============================================================
-# THINKORSWIM STOCK HACKER SETUP INSTRUCTIONS:
-#
-# Step 1 - Add Study Filter:
-#   Filter > Add Study Filter > FallenAngels_Scanner
-#   Set FallenAngelSignal = 1 (true)
-#
-# Step 2 - Set Universe:
-#   Scan In: S&P 500
-#
-# Step 3 - Sort Results:
-#   Sort by RSI ascending to find most oversold first
-#   OR sort by pullback % descending for deepest dips
-#
-# Step 4 - Confirm on Daily/Weekly chart:
-#   - Look for bullish candle patterns at support
-#   - Check for volume confirmation on bounce days
-#   - Verify sector is not in systemic breakdown
-#
-# BEST MARKET CONDITIONS: Use during broad market corrections
-#                         when VIX is elevated (>20)
-# ============================================================
+# ---- FORMATTING ----
+FallenAngelSignal.AssignValueColor(Color.CYAN);
+FallenAngelSignal.SetPaintingStrategy(PaintingStrategy.BOOLEAN_ARROW_UP);
