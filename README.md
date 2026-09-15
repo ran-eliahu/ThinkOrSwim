@@ -1,270 +1,180 @@
-# 📈 ThinkorSwim Trading Studies & Scanners
-## Professional ThinkScript Stock Screeners & Technical Indicators for Day & Swing Trading
+# 📈 ThinkorSwim Institutional Trading Studies & Scanners
+## Professional ThinkScript Stock Screeners & Alpha-Generating Technical Indicators
 
 > **Author:** Ran Eliahu | AI Cloud Engineer & Technical Trader  
 > **Platform:** TD Ameritrade / Schwab ThinkorSwim (TOS)  
 > **Language:** ThinkScript  
-> **Trading Style:** Algorithmic scanning, swing trading, momentum day trading, stock picking
+> **Trading Style:** Institutional Momentum, Swing Trading, Minervini VCP, Relative Strength (RS Alpha), Day Trading ORB
 
 ---
 
-This repository is a go-to collection of [thinkorswim scanners](https://github.com/ran-eliahu/ThinkOrSwim) and custom column formulas designed to improve your scan workflow and watchlist performance.
+This repository is an elite, production-ready collection of [ThinkorSwim scanners](https://github.com/ran-eliahu/ThinkOrSwim), custom watchlist column formulas, and visual chart studies designed to give traders a **systematic edge over regular retail market participants**.
 
-## Overview
+## ⚡ The Edge: Why Regular Scanners Fail vs. Institutional Scanners
 
-This repository contains a **production-ready collection of ThinkScript stock scanners and technical analysis indicators** built for the Schwab ThinkorSwim trading platform. These automated stock screening tools identify high-probability trading opportunities by combining **fundamental stock filters**, **momentum indicators**, **volatility analysis**, and **institutional accumulation detection**.
-
-Every scanner and study is actively used in live trading workflows with defined edges:
-- **Day trading scanner:** Intraday setups on 5-minute charts (8:30–10:30 AM CT)
-- **Swing trade finder:** Multi-day setups on daily charts (S&P 500 focus)
-- **Volatility & breakout scanner:** TTM Squeeze squeeze-fire detection
-- **Quality stock screening:** Fundamental + technical combination filters
-
----
-
-## ⚡ Features at a Glance
-
-| Feature | Benefit |
-|---------|----------|
-| **4 Professional Scanners** | Eliminate manual stock screening—automate your watchlist |
-| **ThinkScript Code Examples** | Copy-paste ready; production-tested in live trading |
-| **Momentum & Breakout Detection** | TTM Squeeze Pro study + squeeze-fire alerts |
-| **Fundamental + Technical Combo** | Quality stock filters + technical entry signals |
-| **Institutional Smart Money Signals** | Detect accumulation before the big move |
-| **Mean Reversion Setup Finder** | Oversold high-quality stocks near moving averages |
-| **Day Trading & Swing Trading Ready** | Multiple timeframes: 5-min, daily, weekly |
-| **Full Setup Documentation** | Step-by-step import guide included |
+| What Regular Retail Traders Do (No Edge) | The Pro Trader Edge (High Win Rate & R:R) |
+| :--- | :--- |
+| **Lagging Indicator Crossovers** (Simple EMA 9/21 cross) | **Multi-Factor Confluence**: Trend + Volume Dry-Up (VDU) + Volatility Contraction + Momentum Ignition. |
+| **Buying High Beta on Green Market Days** (Noise) | **True Relative Strength (RS Alpha)**: Isolating market leaders making new highs while SPY/QQQ pulls back. |
+| **Catching Oversold Falling Knives** (Downtrend traps) | **Institutional Pocket Pivots & Absorption**: Volume exceeding prior 10-day down-volume off key moving averages. |
+| **Midday Chop Chasing** | **Intraday ORB + VWAP Anchor**: Precision morning breakout execution with defined risk at VWAP. |
+| **Stock Hacker Scan Errors** (`AggregationPeriod.WEEK` crash) | **Mathematical Timeframe Synthesis**: Zero-lag daily synthesis without TOS secondary aggregation errors. |
 
 ---
 
-## 🚀 Quick Start
-
-### For Beginners
-1. Download the `SETUP_GUIDE.md` and follow the ThinkorSwim import steps
-2. Start with **Elite Fundamentals Scanner** to build a quality watchlist
-3. Add **TTM Squeeze Pro** study to your charts for entry confirmation
-
-### For Experienced Traders
-1. Import all 4 scanners into Stock Hacker
-2. Run **Institutional Accumulation Scanner** daily at market close
-3. Run **TTM Squeeze Scanner** in "JustFired" mode at 9:45 AM CT for intraday setups
-4. Pair with your own risk management and position sizing
-
-### Recommended Setup
-```
-Watchlist Builder:      EliteFundamentals_Scanner.ts
-Entry Confirmation:     TTMSqueezePro_Study.ts + TTMSqueeze_Scanner.ts
-Mean Reversion Plays:   FallenAngels_Scanner.ts
-Institutional Clues:    InstitutionalAccumulation_Scanner.ts
-```
-
----
-
-## 📁 Repository Structure
+## 🚀 Repository Structure
 
 ```
-think-or-swim-trading-scanners/
+ThinkOrSwim/
 ├── scanners/
-│   ├── EliteFundamentals_Scanner.ts        # Stock screening: P/E, ROE, fundamentals
-│   ├── FallenAngels_Scanner.ts             # Mean reversion: oversold quality stocks
-│   ├── InstitutionalAccumulation_Scanner.ts # Smart money detection & volume analysis
-│   ├── TrendReversal_Bullish_Scanner.ts    # Bearish to bullish inflection scanner
-│   ├── TTMSqueeze_Scanner.ts               # Volatility scanner: squeeze detection
-│   ├── VolumeProfile_Breakout_Scan.ts      # Volume Profile: Value Area Breakout
-│   └── VolumeProfile_Squeeze_Scan.ts       # Volume Profile: Value Area Compression
-├── studies/
-│   └── TTMSqueezePro_Study.ts              # Technical indicator: momentum & breakout
-├── chart_visuals/
-│   └── Multi_Timeframe_POC_Study.ts        # Volume Profile: Naked POC Magnets
-├── README.md                                # You are here
-├── SETUP_GUIDE.md                           # ThinkorSwim import tutorial
+│   ├── VCP_VolatilityContraction_Scanner.ts  # Minervini / Qullamaggie VCP & High Tight Flag
+│   ├── RS_AlphaLeader_Scanner.ts              # True Relative Strength (RS) vs SPY/QQQ
+│   ├── PocketPivot_Absorption_Scanner.ts      # Institutional Pocket Pivot & Absorption
+│   ├── Intraday_ORB_VWAP_Scanner.ts           # 5-min/15-min Opening Range Breakout + VWAP
+│   ├── EliteFundamentals_Scanner.ts          # Institutional Quality & Fundamentals
+│   ├── FallenAngels_Scanner.ts               # Mean Reversion: Oversold Quality Stocks
+│   ├── InstitutionalAccumulation_Scanner.ts  # Smart Money Detection & Money Flow
+│   ├── TrendReversal_Bullish_Scanner.ts      # Inflection Point: Bearish to Bullish Reversal
+│   ├── TTMSqueeze_Scanner.ts                 # Volatility Squeeze & Fire Detector
+│   ├── VolumeProfile_Breakout_Scan.ts        # Value Area High (VAH) Escape Scanner
+│   ├── VolumeProfile_Squeeze_Scan.ts         # Value Area Compression Scanner
+│   └── AboutToBreakOut_Scan.ts               # Momentum Compression Shelf Scanner
 ├── custom columns/
-│   ├── CustomColumn_RSI_Momentum.ts
-│   ├── CustomColumn_Volume_Surge.ts
-│   ├── CustomColumn_Trend_Strength.ts
-│   └── DistanceToPOC.ts                    # Volume Profile: Distance to POC %
-└── .git/                                    # Version control
+│   ├── Alpha_Confluence_Score.ts             # 0-100 Quantitative HUD Watchlist Column
+│   ├── DistanceToPOC.ts                      # Distance to Point of Control %
+│   ├── CustomColumn_Trend_Strength.ts        # Trend Direction + ADX Strength
+│   ├── CustomColumn_Volume_Surge.ts          # Real-time Volume Multiplier
+│   ├── CustomColumn_RSI_Momentum.ts          # RSI Momentum Tier
+│   └── signal.ts                             # Multi-Factor State Indicator
+├── chart_visuals/
+│   ├── Multi_Timeframe_POC_Study.ts          # Multi-Timeframe Naked POC Magnets
+│   └── OrderBlock_Study.ts                   # Institutional Supply/Demand Order Blocks
+├── README.md                                 # Complete documentation
+└── SETUP_GUIDE.md                            # Step-by-step TOS setup and import tutorial
 ```
 
 ---
 
-## 🔍 Stock Scanners & Technical Screening Tools
+## 🔍 Institutional Scanner Suite
 
-### 1. Elite Fundamentals Scanner — Quality Stock Screener
-**File:** `scanners/EliteFundamentals_Scanner.ts`  
-**Use Case:** Build a curated watchlist for swing trading and position trading
+### 1. Volatility Contraction Pattern (VCP) & High Tight Flag Scanner
+**File:** `scanners/VCP_VolatilityContraction_Scanner.ts`  
+**Methodology:** Mark Minervini (U.S. Investing Champion) & Kristjan Qullamaggie Stage 2 Setups  
+**Timeframe:** Daily  
 
-Automatically screens the market for stocks with **institutional-grade fundamentals**. This stock scanner filters based on profitability, balance sheet strength, and value metrics to identify quality names worthy of technical analysis.
-
-| Filter | Criteria |
-|--------|----------|
-| P/E Ratio | 5 – 35 |
-| Price/Book Value | < 10 |
-| Return on Equity | ≥ 15% |
-| Gross Profit Margin | ≥ 40% |
-| Current Ratio | ≥ 1.5 |
-| Book Value Per Share Growth | > 0 |
-| Price | Above 200-day MA |
-
-**Best used:** Weekly, to maintain a curated watchlist of fundamentally sound stocks for technical entry signals.
+Identifies high-momentum stocks coiling in a tight consolidation shelf after an uptrend:
+- **Minervini Trend Template:** Price > 50 SMA > 200 SMA, 200 SMA rising, within 25% of 52-week high.
+- **Volatility Contraction:** `ATR(5) <= ATR(20) * 0.75` and 5-bar high-to-low range <= 6%.
+- **Volume Dry-Up (VDU):** Volume dries up significantly below the 50-day average (supply exhaustion).
+- **Two Modes:**
+  - `Coil_Setup` (Default): Catches the setup before the breakout.
+  - `Breakout_Today`: Alerts at the exact moment price crosses the 5-day pivot shelf on high volume.
 
 ---
 
-### 2. Fallen Angels Scanner — Mean Reversion Stock Finder
-**File:** `scanners/FallenAngels_Scanner.ts`  
-**Use Case:** Identify oversold high-quality stocks near support
+### 2. Institutional Relative Strength (RS Alpha) Leader Scanner
+**File:** `scanners/RS_AlphaLeader_Scanner.ts`  
+**Methodology:** Comparative Alpha Divergence (Stock vs SPY/QQQ)  
+**Timeframe:** Daily  
 
-A specialized stock screener that finds **high-quality S&P 500 names** that have pulled back 8–25% from their 52-week highs but are showing early momentum recovery. Perfect for mean-reversion traders buying strength at a discount during market corrections.
-
-**Signal Logic:**
-- RSI(14) between 25–40 (oversold but not broken)
-- Price 8–25% below 52-week high
-- Price **above** 200-day MA (long-term trend intact)
-- RSI rising (momentum turning up)
-
-**Best used:** During broad market corrections when VIX > 20. Sort results by RSI ascending for deepest oversold names.
+Finds true market leaders that institutional funds are accumulating regardless of broader market chop:
+- **RS Ratio:** Computes the Stock / SPY ratio line in real time.
+- **Alpha Spread:** Stock 20-day Rate of Change exceeds SPY by at least 5%.
+- **RS New Highs:** RS line reaches 20-day highs while price holds above 20 EMA and 50 SMA.
+- **Market Resilience Mode:** Flags stocks advancing on days when SPY is red.
 
 ---
 
-### 3. Institutional Accumulation Scanner — Smart Money Detection
-**File:** `scanners/InstitutionalAccumulation_Scanner.ts`  
-**Use Case:** Detect accumulation before institutional breakouts
+### 3. Institutional Pocket Pivot & Volume Absorption Scanner
+**File:** `scanners/PocketPivot_Absorption_Scanner.ts`  
+**Methodology:** Gil Morales & Dr. Chris Kacher (Former William O'Neil Portfolio Managers)  
+**Timeframe:** Daily  
 
-A unique stock scanner that identifies where **institutional smart money is quietly accumulating** before likely breakouts. Uses volume analysis, VWAP positioning, and Money Flow Index patterns to detect the accumulation phase before the big move.
-
-**Signal Logic:**
-- Volume ≥ 1.5× the 50-day average
-- Price above VWAP
-- Within 5% of 52-week high (near breakout)
-- Money Flow Index (MFI) > 50
-- At least 3 accumulation days in last 10 sessions
-- Price above both 50 MA and 200 MA (confirmed uptrend)
-
-**Best used:** After market close. Stocks appearing consistently across multiple days represent the strongest conviction signals.
+Detects smart money buying within bases or off moving averages before standard breakout patterns:
+- **Pocket Pivot Signature:** Today's up-volume is greater than the highest down-day volume of the past 10 trading sessions.
+- **Structural Pivot:** Bouncing off or reclaiming the 10 EMA, 20 EMA, or 50 SMA.
+- **No Overextension:** Close is within 5% of the supporting moving average.
+- **Upper Range Close:** Closes in the upper 50% of the daily candle range.
 
 ---
 
-### 4. TTM Squeeze Scanner — Volatility Compression Detector
-**File:** `scanners/TTMSqueeze_Scanner.ts`  
-**Use Case:** Find breakout-ready stocks and intraday momentum setups
+### 4. Intraday Institutional ORB + VWAP Momentum Scanner
+**File:** `scanners/Intraday_ORB_VWAP_Scanner.ts`  
+**Methodology:** Morning Opening Range Breakout (ORB) with VWAP Confluence  
+**Timeframe:** 5-minute or 15-minute  
 
-A volatility-focused stock scanner built to complement the TTM Squeeze Pro technical indicator. Three powerful scanning modes for different trading timeframes:
-
-| Mode | Description | Best Run Time |
-|------|-------------|---------------|
-| `InSqueeze` | Stocks currently coiling (BB inside KC) | Pre-market / after close |
-| `JustFired` | Squeeze fired today | 9:45 AM CT |
-| `BullishFired` | Bullish momentum squeeze only | 10:00–10:30 AM CT |
+Engineered for active day traders operating between 9:45 AM and 11:30 AM EST:
+- **Opening Range Breakout:** Price crosses above the first 15-min or 30-min opening range high.
+- **Institutional Anchor:** Price holds strictly above VWAP.
+- **RVOL Surge:** Intraday bar volume >= 1.8x average bar volume.
+- **Anti-Chase Filter:** Triggers only within 1.5% of the breakout high to keep risk tight.
 
 ---
 
-### 5. Trend Reversal Scanner — Bearish to Bullish Shift
+### 5. Trend Reversal Scanner — Bearish to Bullish Inflection
 **File:** `scanners/TrendReversal_Bullish_Scanner.ts`  
-**Use Case:** Catch the earliest high-probability shift from downtrend to uptrend
+**Timeframe:** Daily  
 
-A technical scanner that identifies high-probability trend reversal inflection points where an oversold/depressed stock makes a decisive structural shift to the upside. Eliminates false positives by validating prior weakness and synchronizing MACD crossovers with 20 EMA breakouts across a multi-bar window.
-
-**Signal Logic:**
-- Confirms prior bearish pressure (traded below 20 EMA in >= 6 of last 10 bars)
-- Price breaks out or holds above 20 EMA with bullish candle structure
-- MACD crossover / expansion within 3 bars
-- RSI rebounds out of the cold zone (< 42) into bullish recovery (>= 45)
-- Institutional volume surge (> 1.15× 50-day average volume)
-- TTM Squeeze histogram expanding upward
-
-**Best used:** Daily chart for swing entries; 4-Hour or 60-min for early intraday momentum shifts.
+Catches early structural inflection points from downtrend to Stage 2 recovery:
+- Macro Trend Guard eliminating weekly secondary period scan errors.
+- Confirmed base-building (spent >= 4 of last 10 days below 20 EMA, now holding above 20 EMA).
+- Synchronized MACD histogram expansion and RSI recovery (45–72).
+- Volume expansion >= 50-day average.
 
 ---
 
-### 6. Volume Profile Squeeze Scanner
-**File:** `scanners/VolumeProfile_Squeeze_Scan.ts`  
-**Use Case:** Identify stocks compressing within a very tight Value Area before an explosive breakout.
+### 6. Elite Fundamentals & Quality Stock Screener
+**File:** `scanners/EliteFundamentals_Scanner.ts`  
+**Timeframe:** Daily / Weekly  
 
-A volatility scanner focused entirely on volume. It calculates the percentage distance between the Value Area High (VAH) and Value Area Low (VAL). When this distance is extremely tight (e.g., < 2% of the stock price), it signals that massive institutional volume has coiled in a narrow band. 
-
-**Best used:** Daily chart for identifying impending swing momentum breakouts before they occur.
-
----
-
-### 7. Value Area Breakout Scanner
-**File:** `scanners/VolumeProfile_Breakout_Scan.ts`  
-**Use Case:** Catch stocks escaping their volume nodes into low-liquidity zones.
-
-Scans for stocks breaking out above their Value Area High (VAH) with strong relative volume (e.g., 25% above 20-day average). When price escapes the Value Area, it tends to move rapidly through low-volume nodes.
-
-**Best used:** Daily chart for trend continuation and momentum entries.
+Filters for institutional-grade balance sheets and profitability:
+- P/E between 5 and 35, Price/Book < 10.
+- ROE >= 15%, Gross Margin >= 40%, Current Ratio >= 1.5.
+- Long-term trend intact (Price > 200 SMA).
 
 ---
 
-## 📊 Technical Indicators & Studies
+### 7. Fallen Angels — Mean Reversion Quality Finder
+**File:** `scanners/FallenAngels_Scanner.ts`  
+**Timeframe:** Daily  
 
-### TTM Squeeze Pro — Advanced Momentum & Volatility Indicator
-**File:** `studies/TTMSqueezePro_Study.ts`  
-**Use Case:** Chart study for breakout and momentum confirmation
-
-A professional-grade technical indicator based on John Carter's famous TTM Squeeze. This momentum study detects **volatility compression** (Bollinger Bands contracting inside Keltner Channels) followed by explosive momentum breakouts—perfect for timing breakout entry signals.
-
-**Features:**
-- Dual Keltner Channel detection (standard + wide) for Pro-level squeeze identification
-- Color-coded momentum histogram:
-  - 🟢 **Bright Green** — Positive & rising (strongest bull signal)
-  - 🟩 **Dark Green** — Positive but fading
-  - 🔴 **Bright Red** — Negative & falling (strongest bear signal)
-  - 🟥 **Dark Red** — Negative but recovering
-- Squeeze dot indicator (Black = coiling, Red = fired)
-- Built-in alerts for bullish and bearish squeeze fires
-
-**Timeframes:** 5-minute (day trading) | Daily (swing trading)
+Finds premium S&P 500 stocks pulled back 8–25% from 52-week highs with oversold RSI (25–40) curling back up while remaining above the 200-day moving average.
 
 ---
 
-### Multi-Timeframe POC Magnets — Volume Profile Study
-**File:** `chart_visuals/Multi_Timeframe_POC_Study.ts`  
-**Use Case:** Chart study to visualize hidden institutional support/resistance levels.
-
-Plots the Point of Control (POC) for the Daily (Cyan), Weekly (Magenta), and Monthly (Yellow) profiles. These heavy volume nodes act as massive "magnets" for price. Institutional algorithms often target these untested (naked) POC levels.
-
-**Features:**
-- Distinct, color-coded lines for Daily, Weekly, and Monthly POCs
-- Optional shading for the Value Area (VAH to VAL)
-- Easy toggles to hide/show specific timeframes
-
-**Timeframes:** Intraday (1m, 5m, 15m) or Daily charts
+### 8. Volume Profile Breakout & Squeeze Scanners
+- **`scanners/VolumeProfile_Breakout_Scan.ts`:** Scans for price escaping the Value Area High (VAH) into Low Volume Nodes (fast momentum runs).
+- **`scanners/VolumeProfile_Squeeze_Scan.ts`:** Scans for stocks where Value Area High/Low distance is compressed (< 2% of price), signalling an imminent volume explosion.
 
 ---
 
-## 🚀 How to Import These Scanners into ThinkorSwim
+## 📊 Custom Watchlist Column: 0–100 Alpha Confluence Score
 
-### Importing a Study
-1. Open ThinkorSwim → **Charts**
-2. Click **Studies** (beaker icon) → **Edit Studies**
-3. Click **Create** → paste the `.ts` file contents
-4. Name the study and click **OK**
+**File:** `custom columns/Alpha_Confluence_Score.ts`  
+**Use Case:** Real-time HUD scoring column in any ThinkorSwim Watchlist.
 
-### Importing a Scanner
-1. Open ThinkorSwim → **Scan** tab
-2. Click **Stock Hacker**
-3. Click **Add Study Filter** → **Edit**
-4. Paste the scanner `.ts` code
-5. Configure filters as described in each file's setup comments
-6. Set **Scan In** to desired universe (S&P 500 recommended)
+Quantifies 4 core pillars (25 points each = 100 total):
+1. **Trend Structure (25 pts):** Moving average alignment (`Price > 200 SMA > 50 SMA`, `10 EMA > 20 EMA`).
+2. **Momentum & Compression (25 pts):** Squeeze acceleration, RSI in bull zone (50–72), ATR compression.
+3. **Volume & Institutional Flow (25 pts):** Volume > 50 SMA volume, RVOL surge, up-day closing dominance.
+4. **Location & Proximity (25 pts):** Within 3% of 20-day high, within 15% of 52-week high, above 10 EMA.
 
-> 💡 **Pro Tip:** All fundamental filters (P/E, ROE, etc.) must be added as separate **Fundamental Filters** in the Stock Hacker UI — they cannot be set via ThinkScript directly.
+| Score Tier | Visual Badge | Strategy / Action |
+| :--- | :--- | :--- |
+| **85 – 100** | `⚡ 95 ULTRA` (Bright Green) | Prime breakout candidate; maximum edge setup |
+| **70 – 84** | `🔥 80 STRONG` (Dark Green) | Confirmed trend continuation play |
+| **50 – 69** | `🟡 60 READY` (Yellow) | Base building; watch for trigger |
+| **30 – 49** | `🟠 35 CHOP` (Orange) | Lacking volume/momentum; pass |
+| **0 – 29** | `⛔ 15 AVOID` (Red) | Bearish / broken market structure |
+
+---
+
+## 🛠️ Step-by-Step Installation
+
+See [SETUP_GUIDE.md](file:///Users/raneliahu/Downloads/repos/ThinkOrSwim/SETUP_GUIDE.md) for full instructions on setting up custom columns, Stock Hacker study filters, and recommended scanning routines.
 
 ---
 
 ## ⚠️ Disclaimer
 
-These tools are for **educational and informational purposes only**. Nothing in this repository constitutes financial advice. Trading involves substantial risk of loss. Always do your own research and trade with proper risk management.
-
----
-
-## 🤝 Connect
-
-- **GitHub:** [github.com/ran-eliahu](https://github.com/ran-eliahu)
-- **LinkedIn:** [linkedin.com/in/raneliahu](https://www.linkedin.com/in/raneliahu)
-- **Medium:** [@Eliahu.ran](https://medium.com/@Eliahu.ran)
-
----
-
-*Built with ThinkScript | Powered by data-driven discipline*
+These tools are for **educational and informational purposes only**. Nothing in this repository constitutes financial advice. Always practice strict risk management and position sizing.
