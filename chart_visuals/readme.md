@@ -1,171 +1,108 @@
-# 📦 Chart OB Visuals — Order Block Study for ThinkorSwim
+# 📦 ThinkorSwim Institutional Chart Visual Studies Suite
 
 > **Author:** Ran Eliahu | [github.com/ran-eliahu](https://github.com/ran-eliahu)  
 > **Platform:** TD Ameritrade / Schwab ThinkorSwim (TOS)  
 > **Language:** ThinkScript  
-> **Chart Type:** Overlay Study (upper panel)
+> **Timeframes:** Daily, Weekly, Intraday (5m, 15m, 65m)
 
 ---
 
 ## 📁 Files in This Folder
 
-| File | Description |
-|------|-------------|
-| `OrderBlock_Study.ts` | Main ThinkScript chart study — detects and plots Bull & Bear OB zones |
-| `README.md` | This file — explains what Order Blocks are and how to use the study |
+| Study File | Type | Description |
+| :--- | :--- | :--- |
+| **`RS_Line_NewHigh_Study.ts`** | Upper / HUD | William O'Neil / Mark Minervini Relative Strength (RS) Line + **Blue Dot** RS New Highs vs SPY/QQQ. |
+| **`Institutional_Trend_Ribbon_Study.ts`** | Upper / Clouds | Qullamaggie / Minervini 10/20 EMA ribbon cloud with **Dynamic Candle Colors** for Power Trends & Pullback Buy Zones. |
+| **`KeyLevels_MultiTimeframe_Study.ts`** | Upper / Levels | Multi-Timeframe Structural Levels: Current Week Open, Prior Week High/Low (PWH/PWL), and Prior Month High/Low (PMH/PML). |
+| **`FairValueGap_FVG_Study.ts`** | Upper / Shading | Smart Money Concepts (SMC) 3-bar liquidity imbalance voids with auto-mitigation and retest alerts. |
+| **`Institutional_Volume_Footprint_Study.ts`** | Lower / Volume | Volume Spread Analysis (VSA) classifying Pocket Pivots (Emerald), Volume Dry-Up / VDU (Silver), Churn (Violet), and Climax (Magenta). |
+| **`OrderBlock_Study.ts`** | Upper / Shading | Institutional Supply & Demand Order Blocks with mitigation tracking and alert triggers. |
+| **`Multi_Timeframe_POC_Study.ts`** | Upper / Magnet | Multi-Timeframe Volume Profile Point of Control (POC) magnetic target levels (Daily, Weekly, Monthly). |
 
 ---
 
-## 🧠 What Is an Order Block?
+## 🧠 Study Overview & Visual Mechanics
 
-An **Order Block (OB)** is a concept from Smart Money Concepts (SMC) and Institutional trading theory. It refers to a specific price zone where a large institutional participant — a bank, hedge fund, or market maker — placed a significant buy or sell order that caused a strong directional move.
+### 1. 🟦 Relative Strength (RS) Line & Blue Dot New High Study
+**File:** `RS_Line_NewHigh_Study.ts`  
+**Core Logic:** Computes the direct alpha ratio (`Close / Benchmark_Close`). True institutional leaders print new RS highs **weeks or days before nominal price breaks out** of its consolidation base.
 
-The logic: institutions can't fill their entire position in one candle. Instead, they leave "footprints" at key levels. When price returns to those levels, the institution is likely to re-engage — either to add to their position or defend it — creating high-probability reaction zones.
-
----
-
-### 🟢 Bullish Order Block (Bull OB)
-
-A **Bullish Order Block** is the **last down (red) candle** before a strong impulsive move upward.
-
-```
-    │
-    ▲  Strong green impulse (break of structure)
-    │
-[▓▓▓▓▓]  ← This red candle is the Bull OB
-    │
-```
-
-**Why it matters:**
-- Institutions placed buy orders inside this red candle before the rally
-- When price returns to this zone, institutions are expected to defend it
-- The zone acts as a **demand zone** — buyers step back in
-
-**What to look for on re-test:**
-- Price touches the Bull OB zone (high–low range of that red candle)
-- Bullish reaction: hammer, engulfing, or strong green close
-- Volume expansion on the reaction candle
-- TTM Squeeze firing bullish inside or just below the zone
+* **Visual Indicators:**
+  - 🔵 **Cyan Dot (Blue Dot):** Plotted right above the candle when the RS line prints a new 20-, 50-, or 252-day high.
+  - 🟡 **Yellow Arrow:** Signals **Alpha Divergence** (RS breaking out while price is still consolidating).
+  - 🏷️ **HUD Label:** Displays Benchmark, RS Trend status, and 20D/60D Alpha Spread % in real time.
 
 ---
 
-### 🔴 Bearish Order Block (Bear OB)
+### 2. 🌊 Institutional Trend Ribbon & Pullback Engine
+**File:** `Institutional_Trend_Ribbon_Study.ts`  
+**Core Logic:** Synthesizes the moving average framework of Kristjan Qullamaggie and Mark Minervini (10 EMA, 20 EMA, 50 SMA, 200 SMA) into a zero-clutter trend ribbon and dynamic bar coloring system.
 
-A **Bearish Order Block** is the **last up (green) candle** before a strong impulsive move downward.
-
-```
-    │
-[▓▓▓▓▓]  ← This green candle is the Bear OB
-    │
-    ▼  Strong red impulse (break of structure)
-    │
-```
-
-**Why it matters:**
-- Institutions placed sell orders inside this green candle before the drop
-- When price rallies back to this zone, institutions are expected to re-sell
-- The zone acts as a **supply zone** — sellers return
-
-**What to look for on re-test:**
-- Price rallies into the Bear OB zone
-- Bearish rejection: shooting star, bearish engulfing, or strong red close
-- Volume increase on the rejection candle
-- Stochastic overbought (>80) while inside the zone
+* **Visual Colors:**
+  - 🟢 **Bright Green Bars:** **Power Trend** ($Price > 10\text{ EMA} > 20\text{ EMA} > 50\text{ SMA} > 200\text{ SMA}$).
+  - 🟡 **Cyan Bars:** **Low-Risk Pullback Sweet Spot** (Price pulling back to test the 10/20 EMA shelf in an established uptrend).
+  - 🟣 **Magenta Bars:** **Extended / Climax** ($> 2.5\text{ ATR}$ above 10 EMA — take profits, avoid FOMO).
+  - 🔴 **Dark Red Bars:** **Stage 4 Distribution** (Price below 50 SMA and 10 EMA < 20 EMA).
+  - ⚫ **Dark Gray Bars:** Neutral / Consolidation.
 
 ---
 
-## 🔍 Mitigation — When an OB No Longer Holds
+### 3. 🎯 Multi-Timeframe Key Structural Levels & Balance
+**File:** `KeyLevels_MultiTimeframe_Study.ts`  
+**Core Logic:** High-timeframe market balance boundaries govern institutional order flow, algo stops, and mean reversion without any secondary aggregation crashes.
 
-An Order Block is considered **mitigated** (invalidated) once price closes through the opposite boundary of the zone:
-
-- **Bull OB mitigated** → price closes **below** the low of the Bull OB candle
-- **Bear OB mitigated** → price closes **above** the high of the Bear OB candle
-
-Once mitigated, the zone loses its institutional significance. The study will label mitigated zones with a gray "Mitigated" bubble on the chart.
-
-> **Rule of thumb:** Never enter a trade into a mitigated OB. The institution has already been filled or stopped out, and the zone is no longer defended.
-
----
-
-## 📊 How to Read the Study on Your Chart
-
-### Zone Colors
-
-| Color | Meaning |
-|-------|---------|
-| 🟩 Green zone | Bullish Order Block — potential long entry area |
-| 🟥 Red zone | Bearish Order Block — potential resistance / short area |
-| ⬜ Gray bubble | Zone has been mitigated — ignore for new entries |
-
-### Chart Background Highlight
-
-- **Dark green background** — current price is inside an active Bull OB (watch for long entry)
-- **Dark red background** — current price is inside an active Bear OB (watch for reversal or exit)
-
-### Dashed Lines
-
-Each OB zone is bounded by two dashed lines:
-- **Top line** = high of the OB candle
-- **Bottom line** = low of the OB candle
-
-The cloud fill between them is the zone itself.
+* **Visual Lines & Clouds:**
+  - 🟨 **Yellow Dashed Line:** **Current Week Open** (Above = Bullish weekly posture; Below = Bearish weekly posture).
+  - 🟦 **Cyan Lines:** **Previous Week High (PWH)** & **Previous Week Low (PWL)** (Breakout vs. Turtle Soup false breakdown inflection levels).
+  - 🟪 **Magenta Dashed Lines:** **Previous Month High (PMH)** & **Previous Month Low (PML)**.
+  - ☁️ **Slate Cloud:** Shaded Previous Week Balance Area.
 
 ---
 
-## ⚙️ Study Inputs (Customizable)
+### 4. 🧲 Smart Money Fair Value Gap (FVG) Imbalance
+**File:** `FairValueGap_FVG_Study.ts`  
+**Core Logic:** Detects 3-bar price sequence imbalances where violent institutional displacement leaves unfilled liquidity voids.
 
-| Input | Default | Description |
-|-------|---------|-------------|
-| `lookback` | 3 | Candles back to look for OB detection context |
-| `zoneOpacity` | 30 | Transparency of the zone fill |
-| `showLabels` | Yes | Show price range bubbles on OB formation |
-| `showBullOB` | Yes | Toggle Bullish OB zones on/off |
-| `showBearOB` | Yes | Toggle Bearish OB zones on/off |
-| `maxZones` | 5 | Max active zones drawn per side |
-| `mitigatedFade` | Yes | Show "Mitigated" label when zone is broken |
-| `alertOnTouch` | No | Fire TOS alert when price enters a zone |
+* **Visual Features:**
+  - 🟩 **Green Cloud:** Bullish FVG (Demand Imbalance — acts as magnetic bounce support).
+  - 🟥 **Red Cloud:** Bearish FVG (Supply Imbalance — acts as dynamic overhead resistance).
+  - ⚪ **Auto-Mitigation:** The moment price trades through and fills the imbalance, the zone is flagged as "Mitigated" and clears automatically.
 
 ---
 
-## 🚀 How to Install
+### 5. 📊 Institutional Volume Footprint & VDU
+**File:** `Institutional_Volume_Footprint_Study.ts`  
+**Core Logic:** Replaces ordinary red/green volume with institutional volume intent classification.
 
-1. Open **ThinkorSwim** → go to **Charts**
-2. Click the **Studies** button (beaker icon) → **Edit Studies**
-3. Click **Create** (or **New Study**)
-4. Copy and paste the full contents of `OrderBlock_Study.ts` into the editor
-5. Name it `OrderBlock_Study` and click **OK**
-6. Add it to your chart as an **Upper Study** (it plots on the price panel)
-
-> 💡 **Pro Tip:** Works best on **Daily** charts for swing trading setups. For intraday use, apply to a **15-minute** or **1-hour** chart during the first 90 minutes of the session.
-
----
-
-## 🔗 Integration with the Rest of This Repo
-
-The Order Block study is designed to work alongside the other tools in this repository:
-
-| Tool | How it pairs with OB |
-|------|----------------------|
-| `TTMSqueezePro_Study.ts` | Confirms momentum direction inside an OB zone — strongest signal when squeeze fires inside a Bull OB |
-| `FallenAngels_Scanner.ts` | Finds oversold stocks; combine with Bull OB proximity for high-conviction entries |
-| `InstitutionalAccumulation_Scanner.ts` | Volume footprint aligns with OB theory — both track institutional activity |
-| Custom Column: RVOL | Volume surge into an OB zone significantly increases entry conviction |
-
-**Ideal confluence entry checklist:**
-- [ ] Price is inside or at the bottom of a Bull OB zone
-- [ ] TTM Squeeze is charged (dots) or just fired green
-- [ ] RVOL > 100% on the entry candle
-- [ ] Stochastic is below 30 or crossing up
-- [ ] MACD histogram is positive or turning green
-- [ ] OB is **not** mitigated
+* **Visual Colors:**
+  - 🟩 **Emerald Green Bar + Dot:** **Pocket Pivot** (Volume exceeds highest down-volume of prior 10 days while riding 10 EMA or 50 SMA).
+  - ⚪ **Silver / Light Gray Bar:** **Volume Dry-Up (VDU)** (Volume $\le 60\%$ of 50-day average — supply exhaustion).
+  - 🟪 **Violet / Purple Bar:** **Institutional Churn / Absorption** (Massive volume with narrow price spread).
+  - 🟥 **Magenta Bar:** **Selling Climax** (Excessive volume distribution).
 
 ---
 
-## ⚠️ Disclaimer
-
-This study is for **educational and informational purposes only**. Order Blocks are a discretionary concept — not every OB will hold, and not every re-test will result in a clean reaction. Always combine with your own risk management, defined stop losses, and position sizing. Nothing in this repository constitutes financial advice.
+### 6. 📦 Order Block Study (Bull & Bear OBs)
+**File:** `OrderBlock_Study.ts`  
+**Core Logic:** Detects the last down-candle before an impulsive rally (Bull OB) or last up-candle before an impulsive drop (Bear OB). Provides entry zones, retest alerts, and mitigation labels.
 
 ---
 
-*Built with ThinkScript | Powered by data-driven discipline*  
+### 7. 🧲 Multi-Timeframe Point of Control (POC) Magnets
+**File:** `Multi_Timeframe_POC_Study.ts`  
+**Core Logic:** Plots the Volume Profile Point of Control for Daily (Cyan), Weekly (Magenta), and Monthly (Yellow) periods. High-volume nodes that act as institutional price magnets.
+
+---
+
+## 🚀 How to Install in ThinkorSwim
+
+1. Open **ThinkorSwim** → Navigate to **Charts**.
+2. Click the **Studies** beaker icon → **Edit Studies...**
+3. Click **Create...** (bottom left).
+4. Copy the entire contents of any `.ts` file in this folder and paste into the editor.
+5. Name the study (e.g. `RS_Line_NewHigh_Study` or `Institutional_Trend_Ribbon_Study`) and click **OK**.
+6. Apply to your chart layout and adjust input parameters to your preference!
+
+---
+
 *Part of the [ran-eliahu/ThinkOrSwim](https://github.com/ran-eliahu/ThinkOrSwim) repository*

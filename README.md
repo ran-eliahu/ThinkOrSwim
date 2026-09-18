@@ -55,6 +55,11 @@ ThinkOrSwim/
 │   ├── CustomColumn_RSI_Momentum.ts          # RSI Momentum Tier
 │   └── signal.ts                             # Multi-Factor State Indicator
 ├── chart_visuals/
+│   ├── RS_Line_NewHigh_Study.ts              # O'Neil/Minervini RS Line + Blue Dot New High Study
+│   ├── Institutional_Trend_Ribbon_Study.ts   # Qullamaggie/Minervini 10/20 EMA Cloud & Smart Bar Colors
+│   ├── KeyLevels_MultiTimeframe_Study.ts     # Multi-Timeframe Levels (PWH/PWL, Week Open, PMH/PML)
+│   ├── FairValueGap_FVG_Study.ts             # Smart Money Concepts (SMC) 3-Bar Imbalance & Retest
+│   ├── Institutional_Volume_Footprint_Study.ts # VSA Volume Intent (Pocket Pivot, VDU, Churn, Climax)
 │   ├── Multi_Timeframe_POC_Study.ts          # Multi-Timeframe Naked POC Magnets
 │   └── OrderBlock_Study.ts                   # Institutional Supply/Demand Order Blocks
 ├── README.md                                 # Complete documentation
@@ -270,6 +275,22 @@ Quantifies 4 core pillars (25 points each = 100 total):
 | **50 – 69** | `🟡 60 READY` (Yellow) | Base building; watch for trigger |
 | **30 – 49** | `🟠 35 CHOP` (Orange) | Lacking volume/momentum; pass |
 | **0 – 29** | `⛔ 15 AVOID` (Red) | Bearish / broken market structure |
+
+---
+
+## 🎨 Institutional Chart Visuals Suite
+
+Located in `chart_visuals/`, these studies provide immediate, clean, and sophisticated visual cues for Daily, Weekly, and Intraday charts:
+
+| Study | Type | Key Visual Insight |
+| :--- | :--- | :--- |
+| **`RS_Line_NewHigh_Study.ts`** | Upper / HUD | William O'Neil / Mark Minervini **Blue Dot** markers when the stock's RS line hits a new high before price breaks out. |
+| **`Institutional_Trend_Ribbon_Study.ts`** | Upper / Clouds | Qullamaggie 10/20 EMA ribbon cloud + **Dynamic Candle Colors** for Power Trends (Green), Pullback Buy Zones (Cyan), and Extensions (Magenta). |
+| **`KeyLevels_MultiTimeframe_Study.ts`** | Upper / Levels | Multi-Timeframe Structural Levels: Current Week Open, Prior Week High/Low (PWH/PWL), and Prior Month High/Low (PMH/PML). |
+| **`FairValueGap_FVG_Study.ts`** | Upper / Shading | Smart Money Concepts (SMC) 3-bar Fair Value Gap (FVG) imbalance zones with auto-mitigation and retest alerts. |
+| **`Institutional_Volume_Footprint_Study.ts`** | Lower / Volume | Volume Spread Analysis (VSA) classifying Pocket Pivots (Emerald), Volume Dry-Up / VDU (Silver), Churn (Violet), and Climax (Magenta). |
+| **`OrderBlock_Study.ts`** | Upper / Shading | Institutional Supply & Demand Order Blocks with mitigation tracking and alert triggers. |
+| **`Multi_Timeframe_POC_Study.ts`** | Upper / Magnet | Multi-Timeframe Volume Profile Point of Control (POC) magnetic target levels (Daily, Weekly, Monthly). |
 
 ---
 
