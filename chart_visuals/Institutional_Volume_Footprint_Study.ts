@@ -25,6 +25,8 @@ input volMaLength          = 50;     # Volume moving average period
 input vduRatio             = 0.60;   # Volume Dry-Up threshold (<= 60% of average)
 input climaxRatio          = 2.20;   # Climax volume multiplier (>= 2.2x average)
 input pocketPivotLookback  = 10;     # Highest down-volume lookback for pocket pivot
+input vduStreakThreshold   = 5;      # Alert when consecutive VDU bars >= this number
+input alertOnVDUStreak     = yes;    # Trigger TOS audio/visual alert on VDU cluster
 input showHUDLabels        = yes;    # Display RVOL & Volume State HUD
 input showPocketPivotDots  = yes;    # Plot indicator dot above Pocket Pivot bars
 
@@ -48,6 +50,8 @@ def isPocketPivot = (close > close[1]) and (volume > maxDownVol) and (close >= f
 
 # 2. Volume Dry-Up (VDU)
 def isVDU = volume <= (volMA * vduRatio);
+rec vduStreak = if isVDU then vduStreak[1] + 1 else 0;
+def isVDUClusterTrigger = vduStreak == vduStreakThreshold;
 
 # 3. Ultra-High Volume Churn / Absorption (Massive volume with small price spread)
 def isChurn = (volume >= volMA * 2.0) and (barRange <= (atr * 0.45));
@@ -91,6 +95,12 @@ PPDot.HideTitle();
 # HUD DASHBOARD LABELS
 # ─────────────────────────────────────────────
 AddLabel(
+    showHUDLabels and vduStreak >= vduStreakThreshold,
+    "⚡ VDU COIL: " + vduStreak + " CONSECUTIVE BARS (SUPPLY EXHAUSTED)",
+    Color.CYAN
+);
+
+AddLabel(
     showHUDLabels,
     "RVOL: " + Round(rvolPct, 0) + "%",
     if rvolPct >= 200 then Color.MAGENTA
@@ -104,7 +114,7 @@ AddLabel(
     if isClimaxSell then "▼ SELLING CLIMAX (High Vol Distribution)"
     else if isChurn then "⚡ VOLUME ABSORPTION / CHURN"
     else if isPocketPivot then "★ POCKET PIVOT ACCUMULATION"
-    else if isVDU then "○ VOLUME DRY-UP (VDU Supply Exhaustion)"
+    else if isVDU then "○ VOLUME DRY-UP (" + vduStreak + " Bar" + (if vduStreak > 1 then "s" else "") + ")"
     else "• Normal Volume Flow",
     if isClimaxSell then Color.MAGENTA
     else if isChurn then CreateColor(186, 85, 211)
@@ -117,4 +127,14 @@ AddLabel(
     showHUDLabels,
     "50D Vol Avg: " + (if volMA >= 1000000 then Round(volMA / 1000000, 2) + "M" else Round(volMA / 1000, 0) + "k"),
     Color.GRAY
+);
+
+# ─────────────────────────────────────────────
+# ALERTS
+# ─────────────────────────────────────────────
+Alert(
+    alertOnVDUStreak and isVDUClusterTrigger,
+    "Institutional VDU Alert: " + vduStreakThreshold + "+ consecutive Volume Dry-Up bars detected! Floating supply exhausted — watch for breakout!",
+    Alert.BAR,
+    Sound.Chimes
 );
