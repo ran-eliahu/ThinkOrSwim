@@ -27,6 +27,8 @@ This repository is an elite, production-ready collection of [ThinkorSwim scanner
 ```
 ThinkOrSwim/
 ├── scanners/
+│   ├── TwoYear_Bulls_Scanner.ts                   # Secular Stage 2 Macro Trend & 2-Year High Breakout
+│   ├── TwoYear_Bears_Scanner.ts                   # Secular Stage 4 Macro Downtrend & 2-Year Low Breakdown
 │   ├── VCP_VolatilityContraction_Scanner.ts       # Minervini / Qullamaggie VCP & High Tight Flag
 │   ├── RS_AlphaLeader_Scanner.ts                   # True Relative Strength (RS) vs SPY/QQQ
 │   ├── PocketPivot_Absorption_Scanner.ts           # Institutional Pocket Pivot & Absorption
@@ -254,6 +256,32 @@ Detects stealth smart money buying before visible price explosions:
 ### 17. Volume Profile Breakout & Squeeze Scanners
 - **`scanners/VolumeProfile_Breakout_Scan.ts`:** Scans for price escaping the Value Area High (VAH) into Low Volume Nodes (fast momentum runs).
 - **`scanners/VolumeProfile_Squeeze_Scan.ts`:** Scans for stocks where Value Area High/Low distance is compressed (< 2% of price), signalling an imminent volume explosion.
+
+---
+
+### 18. 2-Year Bulls Scanner — Secular Trend & 2-Year High Breakout
+**File:** `scanners/TwoYear_Bulls_Scanner.ts`  
+**Methodology:** Multi-Year Structural Expansion & Secular Stage 2 Leadership  
+**Timeframe:** Daily  
+
+Captures secular market leaders breaking out to new 2-year (504-day) highs with zero overhead supply:
+- **Structural Ceiling Breakout:** Slicing above the 504-trading-day high on expanding volume.
+- **Stage 2 Secular Template:** Perfect moving average fan (`Price > 10 EMA > 20 EMA > 50 SMA > 200 SMA`) with rising 200 SMA.
+- **Pre-Breakout Base Coil:** Volatility contraction shelf hugging within 3.5% of 2-year highs with supply exhaustion.
+- **Three Selectable Modes:** `Two_Year_Breakout` (Default), `Two_Year_Base_Coil`, and `Secular_Bull_Trend`.
+
+---
+
+### 19. 2-Year Bears Scanner — Secular Downtrend & 2-Year Low Breakdown
+**File:** `scanners/TwoYear_Bears_Scanner.ts`  
+**Methodology:** Multi-Year Structural Distribution & Secular Stage 4 Liquidation  
+**Timeframe:** Daily  
+
+Surfaces failing equities breaking down to new 2-year (504-day) lows for high-probability short setups:
+- **Structural Floor Breakdown:** Decisive breakdown below the 504-trading-day low on heavy selling volume.
+- **Stage 4 Secular Waterfall:** Bearish moving average alignment (`Price < 10 EMA < 20 EMA < 50 SMA < 200 SMA`) with declining 200 SMA and Death Cross.
+- **Multi-Year Bear Flag:** Low-volume relief rallies into declining moving averages rolling over near 2-year lows.
+- **Three Selectable Modes:** `Two_Year_Breakdown` (Default), `Two_Year_Bear_Flag`, and `Secular_Bear_Trend`.
 
 ---
 
