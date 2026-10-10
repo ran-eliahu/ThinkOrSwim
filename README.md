@@ -27,6 +27,7 @@ This repository is an elite, production-ready collection of [ThinkorSwim scanner
 ```
 ThinkOrSwim/
 ├── scanners/
+│   ├── TwoYear_Bulls_Scan.ts                      # 2-Year (104-Week) Multi-Year Performance Bull Scan
 │   ├── TwoYear_Bulls_Scanner.ts                   # Secular Stage 2 Macro Trend & 2-Year High Breakout
 │   ├── TwoYear_Bears_Scanner.ts                   # Secular Stage 4 Macro Downtrend & 2-Year Low Breakdown
 │   ├── VCP_VolatilityContraction_Scanner.ts       # Minervini / Qullamaggie VCP & High Tight Flag
@@ -259,16 +260,13 @@ Detects stealth smart money buying before visible price explosions:
 
 ---
 
-### 18. 2-Year Bulls Scanner — Secular Trend & 2-Year High Breakout
-**File:** `scanners/TwoYear_Bulls_Scanner.ts`  
-**Methodology:** Multi-Year Structural Expansion & Secular Stage 2 Leadership  
-**Timeframe:** Daily  
-
-Captures secular market leaders breaking out to new 2-year (504-day) highs with zero overhead supply:
-- **Structural Ceiling Breakout:** Slicing above the 504-trading-day high on expanding volume.
-- **Stage 2 Secular Template:** Perfect moving average fan (`Price > 10 EMA > 20 EMA > 50 SMA > 200 SMA`) with rising 200 SMA.
-- **Pre-Breakout Base Coil:** Volatility contraction shelf hugging within 3.5% of 2-year highs with supply exhaustion.
-- **Three Selectable Modes:** `Two_Year_Breakout` (Default), `Two_Year_Base_Coil`, and `Secular_Bull_Trend`.
+### 18. 2-Year Bulls Scanners — Secular Trend, Gain Leaders & 2-Year High Breakouts
+- **`scanners/TwoYear_Bulls_Scan.ts`:** Weekly 2-year (104-week) performance filter scanning for securities with >= 80% gain over the past 2 calendar years.
+- **`scanners/TwoYear_Bulls_Scanner.ts`:** Captures secular market leaders breaking out to new 2-year (504-day) highs with zero overhead supply:
+  - **Structural Ceiling Breakout:** Slicing above the 504-trading-day high on expanding volume.
+  - **Stage 2 Secular Template:** Perfect moving average fan (`Price > 10 EMA > 20 EMA > 50 SMA > 200 SMA`) with rising 200 SMA.
+  - **Pre-Breakout Base Coil:** Volatility contraction shelf hugging within 3.5% of 2-year highs with supply exhaustion.
+  - **Three Selectable Modes:** `Two_Year_Breakout` (Default), `Two_Year_Base_Coil`, and `Secular_Bull_Trend`.
 
 ---
 
