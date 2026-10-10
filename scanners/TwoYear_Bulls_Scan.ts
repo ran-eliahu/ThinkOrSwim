@@ -7,11 +7,11 @@
 #
 # Strategy:
 #   Filters for secular long-term bull market leaders that have 
-#   appreciated by at least 80% over a 2-year (104-week) lookback period.
+#   appreciated by at least 50% over a 2-year (104-week) lookback period.
 # ============================================================
 
 input lookbackWeeks = 104; # 52 weeks x 2 = 2 calendar years
-input minPercentGain = 80.0;
+input minPercentGain = 50.0;
 
 def pastPrice = close[lookbackWeeks];
 def pctGain = if pastPrice > 0 then ((close - pastPrice) / pastPrice) * 100 else 0;

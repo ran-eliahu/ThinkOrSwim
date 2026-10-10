@@ -261,7 +261,7 @@ Detects stealth smart money buying before visible price explosions:
 ---
 
 ### 18. 2-Year Bulls Scanners — Secular Trend, Gain Leaders & 2-Year High Breakouts
-- **`scanners/TwoYear_Bulls_Scan.ts`:** Weekly 2-year (104-week) performance filter scanning for securities with >= 80% gain over the past 2 calendar years.
+- **`scanners/TwoYear_Bulls_Scan.ts`:** Weekly 2-year (104-week) performance filter scanning for securities with >= 50% gain over the past 2 calendar years.
 - **`scanners/TwoYear_Bulls_Scanner.ts`:** Captures secular market leaders breaking out to new 2-year (504-day) highs with zero overhead supply:
   - **Structural Ceiling Breakout:** Slicing above the 504-trading-day high on expanding volume.
   - **Stage 2 Secular Template:** Perfect moving average fan (`Price > 10 EMA > 20 EMA > 50 SMA > 200 SMA`) with rising 200 SMA.
